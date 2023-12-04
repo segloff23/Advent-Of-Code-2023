@@ -15,14 +15,14 @@ def partOne(problem):
     total = 0
     for r in range(1, len(problem)-1):
         line = problem[r]
-        for match in re.finditer("(\d+)", line):
+        for match in re.finditer("([0-9]+)", line):
             span = match.span()
             value = int(match.group())
             searches = [
-                (r-1, span[0]-1, span[1]+1),
-                (r+1, span[0]-1, span[1]+1),
-                (r, span[0]-1, span[0]),
-                (r, span[1], span[1]+1)
+                (r-1, span[0]-1, span[1]+1), # above
+                (r+1, span[0]-1, span[1]+1), # below
+                (r, span[0]-1, span[0]), # left
+                (r, span[1], span[1]+1) # right
             ]
             for rs, cs0, cs1 in searches:
                 if re.search("[^0-9.]", problem[rs][cs0:cs1]):
@@ -35,14 +35,14 @@ def partTwo(problem):
     gears = {}
     for r in range(1, len(problem)-1):
         line = problem[r]
-        for match in re.finditer("(\d+)", line):
+        for match in re.finditer("([0-9]+)", line):
             span = match.span()
             value = int(match.group())
             searches = [
-                (r-1, span[0]-1, span[1]+1),
-                (r+1, span[0]-1, span[1]+1),
-                (r, span[0]-1, span[0]),
-                (r, span[1], span[1]+1)
+                (r-1, span[0]-1, span[1]+1), # above
+                (r+1, span[0]-1, span[1]+1), # below
+                (r, span[0]-1, span[0]), # left
+                (r, span[1], span[1]+1) # right
             ]
             for rs, cs0, cs1 in searches:
                 for gearMatch in re.finditer("\*", problem[rs][cs0:cs1]):
