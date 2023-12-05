@@ -12,15 +12,16 @@ def partOne(problem):
     print("Part 1: {:d}".format(total))
 
 def partTwo(problem):
-    
+
     digitNames = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
-    
+
     basePattern = "|".join(digitNames)
-    
+    reversePattern = "|".join(digitNames)[::-1]
+
     digitLookup = dict((k, str(n + 1)) for n, k in enumerate(digitNames))
 
     digitsForward = [re.findall("\d|" + basePattern, line) for line in problem];
-    digitsReverse = [re.findall("\d|" + basePattern[::-1], line[::-1]) for line in problem];
+    digitsReverse = [re.findall("\d|" + reversePattern, line[::-1]) for line in problem];
 
     getDigit = lambda d : digitLookup[d] if d in digitLookup else d
 
