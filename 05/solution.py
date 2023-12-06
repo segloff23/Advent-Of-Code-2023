@@ -89,7 +89,7 @@ def partTwo(problem):
 # %% MAIN CALLS
 if __name__ == "__main__":
 
-    print("Solving Day 5, AoC 2022")
+    print("Solving Day 5, AoC 2023")
 
     problem = read();
 
