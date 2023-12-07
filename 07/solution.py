@@ -5,85 +5,64 @@ def read():
     with open("problem.txt") as problemFile:
         for line in problemFile.readlines():
             left, right = line.split(" ")
-            hand = [cardMap[c] if c in cardMap else int(c) for c in left]
+            hand = tuple(cardMap[c] if c in cardMap else int(c) for c in left)
             bid = int(right.strip())
-            problem.append((tuple(hand), bid))
+            problem.append((hand, bid))
     return problem
 
-standardCache = {}
-def standardEvaluator(hand):
-    if hand not in standardCache:
-        freq = [hand.count(c) for c in set(hand)]
-        if (5 in freq):
-            standardCache[hand] = (7, hand)
-        elif (4 in freq):
-            standardCache[hand] = (6, hand)
-        elif (3 in freq and 2 in freq):
-            standardCache[hand] = (5, hand)
-        elif (3 in freq):
-            standardCache[hand] = (4, hand)
-        elif (freq.count(2) == 2):
-            standardCache[hand] = (3, hand)
-        elif (2 in freq):
-            standardCache[hand] = (2, hand)
-        else:
-            standardCache[hand] = (1, hand)
+def evaluateType(hand):
+    freq = [hand.count(c) for c in set(hand)]
+    if (5 in freq):
+        return 7
+    elif (4 in freq):
+        return 6
+    elif (3 in freq and 2 in freq):
+        return 5
+    elif (3 in freq):
+        return 4
+    elif (freq.count(2) == 2):
+        return 3
+    elif (2 in freq):
+        return 2
+    else:
+        return 1
 
-    return standardCache[hand]
+typeCache = {}
+def evaluateCachedType(hand):
+    if hand not in typeCache:
+        typeCache[hand] = evaluateType(hand)
+
+    return typeCache[hand]
 
 def partOne(problem):
-
-    problem.sort(key=lambda x: standardEvaluator(x[0]))
-
+    problem.sort(key=lambda x: (evaluateType(x[0]), x[0]))
     total = sum((n + 1) * bid for n, (_, bid) in enumerate(problem))
 
     print("Part 1: {:d}".format(total))
 
 def partTwo(problem):
-
     problem = [(tuple(1 if c == 11 else c for c in hand), bid) for hand, bid in problem]
 
-    cache = {}
+    optimalCache = {}
     def optimalEvaluator(hand):
-        if hand not in cache:
+        if hand not in optimalCache:
             newHand = optimizer(hand)
-            freq = [newHand.count(c) for c in set(newHand)]
+            optimalCache[hand] = (evaluateType(newHand), hand)
 
-            if (5 in freq):
-                cache[hand] = (7, hand)
-            elif (4 in freq):
-                cache[hand] = (6, hand)
-            elif (3 in freq and 2 in freq):
-                cache[hand] = (5, hand)
-            elif (3 in freq):
-                cache[hand] = (4, hand)
-            elif (freq.count(2) == 2):
-                cache[hand] = (3, hand)
-            elif (2 in freq):
-                cache[hand] = (2, hand)
-            else:
-                cache[hand] = (1, hand)
-
-        return cache[hand]
-
-    def optimizerHelper(hand, i):
-        if i == 5:
-            return (standardEvaluator(hand), hand)
-        if hand[i] != 1:
-            return optimizerHelper(hand, i+1)
-
-        options = []
-        for c in range(1, 15):
-            if c == 11:
-                continue
-            newHand = (*hand[:i], c, *hand[i+1:])
-            options.append(optimizerHelper(newHand, i+1))
-        return max(options)
+        return optimalCache[hand]
 
     def optimizer(hand):
-        if 1 not in hand:
+        jokers = hand.count(1)
+        if jokers == 0:
             return hand
-        return optimizerHelper(hand, 0)[1]
+        if jokers == 5:
+            return (14, 14, 14, 14, 14)
+
+        maxFreq = max(hand.count(c) for c in hand)
+        options = [c for c in hand if hand.count(c) == maxFreq if c != 1]
+        replacement = max(options, default = max(hand))
+
+        return tuple(replacement if c == 1 else c for c in hand)
 
     problem.sort(key=lambda x: optimalEvaluator(x[0]))
 
