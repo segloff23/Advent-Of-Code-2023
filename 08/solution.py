@@ -29,9 +29,6 @@ def partOne(problem):
 
     print("Part 1: {:d}".format(steps))
 
-def lcm(a, b):
-    return (a * b) // math.gcd(a, b)
-
 def partTwo(problem):
     instructions, lookup = problem
     N = len(instructions)
@@ -39,7 +36,7 @@ def partTwo(problem):
     starts = set(word for word in lookup if word[-1] == "A")
     goals = set(word for word in lookup if word[-1] == "Z")
 
-    min_steps = 1
+    stepList = []
     for s in starts:
         goal = None
         current = s
@@ -51,9 +48,11 @@ def partTwo(problem):
             steps += 1
             if current in goals:
                 goal = steps
-        min_steps = lcm(min_steps, goal)
+        stepList.append(goal)
+    
+    minSteps = math.lcm(*stepList)
 
-    print("Part 2: {:d}".format(min_steps))
+    print("Part 2: {:d}".format(minSteps))
 
 # %% MAIN CALLS
 if __name__ == "__main__":
