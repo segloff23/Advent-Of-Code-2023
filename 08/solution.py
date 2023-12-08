@@ -1,23 +1,64 @@
+import math
+import re
 
 def read():
     problem = []
     with open("problem.txt") as problemFile:
-        problem = list(map(int, problemFile.readlines()))
+        LR = { "L": 0, "R": 1 }
+        instructions, rest = problemFile.read().split("\n\n")
+        instructions = [LR[i] for i in instructions]
+        lookup = {}
+        for line in rest.split("\n"):
+            a, b, c = re.match(r"(\w+) = \((\w+), (\w+)\)", line).groups()
+            lookup[a] = (b, c)
+        problem = (instructions, lookup)
 
     return problem
 
 def partOne(problem):
+    instructions, lookup = problem
+    N = len(instructions)
 
-    print("Part 1: {:d}".format(0))
+    current, goal = "AAA", "ZZZ"
+    i, steps = 0, 0
+    while current != goal:
+        current = lookup[current][instructions[i]]
+        i += 1
+        i %= N
+        steps += 1
+
+    print("Part 1: {:d}".format(steps))
+
+def lcm(a, b):
+    return (a * b) // math.gcd(a, b)
 
 def partTwo(problem):
+    instructions, lookup = problem
+    N = len(instructions)
 
-    print("Part 2: {:d}".format(0))
+    starts = set(word for word in lookup if word[-1] == "A")
+    goals = set(word for word in lookup if word[-1] == "Z")
+
+    min_steps = 1
+    for s in starts:
+        goal = None
+        current = s
+        i, steps = 0, 0
+        while not goal:
+            current = lookup[current][instructions[i]]
+            i += 1
+            i %= N
+            steps += 1
+            if current in goals:
+                goal = steps
+        min_steps = lcm(min_steps, goal)
+
+    print("Part 2: {:d}".format(min_steps))
 
 # %% MAIN CALLS
 if __name__ == "__main__":
 
-    print("Solving Day 8, AoC 2022")
+    print("Solving Day 8, AoC 2023")
 
     problem = read();
 
