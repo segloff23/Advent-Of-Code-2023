@@ -38,13 +38,13 @@ def partOne(problem):
     faces["S"] = sourceFaces
 
 
-    loopA = {}
+    loop = {}
 
     dist = 0
     cameFrom = sourceFaces[0]
     node = source
-    while node not in loopA:
-        loopA[node] = dist
+    while node not in loop:
+        loop[node] = dist
         dist += 1
         r, c = int(node.real), int(node.imag)
         A, B = faces[problem[r][c]]
@@ -55,26 +55,7 @@ def partOne(problem):
             node += B
             cameFrom = B
 
-    loopB = {}
-
-    dist = 0
-    cameFrom = sourceFaces[1]
-    node = source
-    while node not in loopB:
-        loopB[node] = dist
-        dist += 1
-        r, c = int(node.real), int(node.imag)
-        A, B = faces[problem[r][c]]
-        if A != -1*cameFrom:
-            node += A
-            cameFrom = A
-        else:
-            node += B
-            cameFrom = B
-
-    loop = { k: min(loopA[k], loopB[k]) for k in loopA }
-
-    maxDist = max(loop.values())
+    maxDist = (len(loop) // 2) + (len(loop) % 2)
 
     print("Part 1: {:d}".format(maxDist))
 
