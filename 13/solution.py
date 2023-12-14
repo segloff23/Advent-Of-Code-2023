@@ -10,7 +10,7 @@ def read():
 
     return problem, [toTranspose(grid) for grid in problem]
 
-def findFirstReflection(grid, forbidMultiple=False):
+def findReflection(grid):
     for i in range(1, len(grid)):
         r = min(i, len(grid) - i)
         if grid[i-r:i] == grid[i+r-1:i-1:-1]:
@@ -22,7 +22,7 @@ def partOne(problem):
 
     total = 0
     for grid, gridT in zip(*problem):
-        total += 100 * findFirstReflection(grid) or findFirstReflection(gridT)
+        total += 100 * findReflection(grid) or findReflection(gridT)
 
     print("Part 1: {:d}".format(total))
 
