@@ -65,5 +65,3 @@ if __name__ == "__main__":
 
     partOne(problem);
     partTwo(problem);
-
-# 30890 too low
